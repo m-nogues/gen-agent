@@ -1,7 +1,10 @@
 import random
+import socket
 import subprocess
 from copy import deepcopy
 
+
+AGENT_IP = ''
 
 def format_parameter(parameter, vm):
     """Formats the parameter for a command
@@ -32,6 +35,14 @@ def choose_vm(rand_service, vms):
         break
     return rand_service, rand_vm
 
+def rec_cmd():
+    if AGENT_IP:
+        while True:
+            port = 10
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.bind(())
+    else:
+        print('IP not set')
 
 class Agent:
 
