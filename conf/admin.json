@@ -1,0 +1,17 @@
+{
+  "httpd": {
+    "bias": 0.5,
+    "combo_max": 10,
+    "wait_time": 30
+  },
+  "ftpd": {
+    "bias": 0.1,
+    "combo_max": 5,
+    "wait_time": 60
+  },
+  "sshd": {
+    "bias": 0.5,
+    "combo_max": 50,
+    "wait_time": 10
+  }
+}

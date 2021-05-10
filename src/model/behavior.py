@@ -11,20 +11,23 @@ def load_bias(role, services):
         if s.name in tmp.keys():
             bias[s.name] = tmp[s.name]
 
-    total = sum(bias.values())
+    total = 0
+    for v in bias:
+        total += v['bias']
+
     if total == 0.0:
         total = 1.0
 
-    for k, v in bias.items():
-        bias[k] = v / total
+    for b in bias:
+        bias[b]['bias'] /= total
     return bias
 
 
 class Behavior:
 
     # Python native methods
-    def __init__(self, name, services, role, max_actions):
-        self.__name, self.__bias, self.__max_actions = name, dict(), max_actions
+    def __init__(self, name, services, role):
+        self.__name, self.__bias = name, dict()
 
         try:
             self.__bias = load_bias(role, services)
@@ -45,9 +48,6 @@ class Behavior:
 
     @property
     def bias(self): return deepcopy(self.__bias)
-
-    @property
-    def max_actions(self): return self.__max_actions
 
     def change_bias(self, key, value):
         if not isinstance(value, float) or value > 1.0 or value < 0.0 or sum(self.bias.value()) > 1.0:

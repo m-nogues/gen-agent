@@ -3,8 +3,10 @@ import socket
 import subprocess
 from copy import deepcopy
 
+from src.model import behavior
 
 AGENT_IP = ''
+
 
 def format_parameter(parameter, vm):
     """Formats the parameter for a command
@@ -35,6 +37,7 @@ def choose_vm(rand_service, vms):
         break
     return rand_service, rand_vm
 
+
 def rec_cmd():
     if AGENT_IP:
         while True:
@@ -44,14 +47,22 @@ def rec_cmd():
     else:
         print('IP not set')
 
+
+def set_ip(ip):
+    global AGENT_IP
+    AGENT_IP = ip
+
+
 class Agent:
 
     # Python native methods
-    def __init__(self, ip, mac, behavior, services):
-        self.__ip, self.__mac, self.__behavior, self.__services = ip, mac, behavior, services
+    def __init__(self, ip, bhvr, services):
+        set_ip(ip)
+
+        self.__behavior, self.__services = behavior.Behavior(ip + ' - ' + bhvr, services, bhvr), services
 
     def __str__(self):
-        ret = 'ip:\t' + self.__ip + '\nmac:\t' + self.__mac + '\nservices:'
+        ret = 'ip:\t' + AGENT_IP + '\nservices:'
         i = 0
         for service in self.__services:
             ret += '\n\tservice_' + str(i) + ':' + ''.join(['\n\t\t' + line for line in str(service).split('\n')])
@@ -86,33 +97,11 @@ class Agent:
 
     def to_csv(self):
         ret = {
-            'ip': self.__ip,
-            'mac': self.__mac,
+            'ip': AGENT_IP,
             'services': ' '.join([service.name for service in self.__services]),
-            'behavior': self.__behavior.name,
-            'actions': ';'.join(
-                [action.name + ',' + str(action.timestamp) + ',' + action.parameters for action in self.__actions])
+            'behavior': self.__behavior.name
         }
         return ret
-
-    # Attributes
-    @property
-    def ip(self): return self.__ip
-
-    @property
-    def mac(self): return self.__mac
-
-    @property
-    def services(self): return self.__services
-
-    @property
-    def behavior(self): return self.__behavior
-
-    @property
-    def actions(self): return self.__actions
-
-    @property
-    def started(self): return self.__started
 
     def add_service(self, service):
         try:
@@ -128,3 +117,16 @@ class Agent:
 
     def update_behavior(self, service, bias):
         self.__behavior.change_bias((service, bias))
+
+    # Attributes
+    @property
+    def services(self):
+        return self.__services
+
+    @property
+    def behavior(self):
+        return self.__behavior
+
+    @property
+    def started(self):
+        return self.__started
