@@ -1,5 +1,5 @@
 import random
-import socket
+# import socket
 import subprocess
 from copy import deepcopy
 
@@ -38,14 +38,14 @@ def choose_vm(rand_service, vms):
     return rand_service, rand_vm
 
 
-def rec_cmd():
-    if AGENT_IP:
-        while True:
-            port = 10
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.bind(())
-    else:
-        print('IP not set')
+# def rec_cmd():
+#     if AGENT_IP:
+#         while True:
+#             port = 10
+#             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#             sock.bind(())
+#     else:
+#         print('IP not set')
 
 
 def set_ip(ip):
@@ -58,6 +58,7 @@ class Agent:
     # Python native methods
     def __init__(self, ip, bhvr, services):
         set_ip(ip)
+        self.__started = False
 
         self.__behavior, self.__services = behavior.Behavior(ip + ' - ' + bhvr, services, bhvr), services
 
@@ -116,7 +117,7 @@ class Agent:
             pass
 
     def update_behavior(self, service, bias):
-        self.__behavior.change_bias((service, bias))
+        self.__behavior.change_bias(service, bias)
 
     # Attributes
     @property
