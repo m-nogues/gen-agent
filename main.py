@@ -28,7 +28,6 @@ def convert_to_objects(conf):
                 if s in srv.name:
                     v.add_service(srv)
 
-
     conf['experiment']['start_date'] = datetime.strptime(conf['experiment']['start_date'], '%Y-%m-%d %H:%M')
     conf['experiment']['end_date'] = datetime.strptime(conf['experiment']['end_date'], '%Y-%m-%d %H:%M')
 
@@ -103,5 +102,4 @@ if __name__ == '__main__':
     conf = configure(args.conf)
 
     agt = agent.Agent(conf['network']['ip'], conf['network']['behavior'], conf['network']['services'])
-
 

@@ -1,6 +1,7 @@
 import random
 # import socket
 import subprocess
+import threading
 from copy import deepcopy
 
 from src.model import behavior
@@ -53,6 +54,16 @@ def set_ip(ip):
     AGENT_IP = ip
 
 
+def execute(command, parameter):
+    result = subprocess.run([command, parameter], stdout=subprocess.PIPE)
+
+    for err in command.errors:
+        if err in result.stdout:
+            return False
+
+    return True
+
+
 class Agent:
 
     # Python native methods
@@ -85,16 +96,19 @@ class Agent:
         # Choose random VM to perform action on
         rand_service, rand_vm = choose_vm(rand_service, vms)
 
+        combo = random.randrange(self.behavior.bias[rand_service.name()]['combo_max'])
+        self.repeat(rand_service, rand_vm, combo)
+
+    def repeat(self, service, vm, combo):
         # Choose random command and parameters
-        rand_command = random.sample(rand_service.commands, 1)[0]
-        rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], rand_vm)
+        rand_command = random.sample(service.commands, 1)[0]
+        rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], vm)
 
-        result = subprocess.run([rand_command, rand_parameter], stdout=subprocess.PIPE)
+        if not execute(rand_command, rand_parameter):
+            self.action(vms)
 
-        for err in rand_command.errors:
-            if err in result.stdout:
-                self.action(vms)
-                break
+        if combo > 0:
+            threading.Timer(self.behavior.bias[service.name()]['wait_time'], self.repeat, [service, vm, combo - 1]).start()
 
     def to_csv(self):
         ret = {
