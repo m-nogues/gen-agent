@@ -91,6 +91,13 @@ def configure(config_file):
     return conf
 
 
+def main(file):
+    conf = configure(file)
+
+    agt = agent.Agent(conf['network']['ip'], conf['network']['behavior'], conf['network']['services'],
+                      conf['network']['vms'])
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Python framework for an easy creation of a network model for scientific pcap creation.')
@@ -99,7 +106,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    conf = configure(args.conf)
-
-    agt = agent.Agent(conf['network']['ip'], conf['network']['behavior'], conf['network']['services'])
-
+    main(args.conf)

@@ -67,10 +67,11 @@ def execute(command, parameter):
 class Agent:
 
     # Python native methods
-    def __init__(self, ip, bhvr, services):
+    def __init__(self, ip, bhvr, services, network):
         set_ip(ip)
         self.__started = False
 
+        self.__network = network
         self.__behavior, self.__services = behavior.Behavior(ip + ' - ' + bhvr, services, bhvr), services
 
     def __str__(self):
@@ -85,7 +86,7 @@ class Agent:
         return ret
 
     # Useful Methods
-    def action(self, vms):
+    def action(self):
         # Choose biased service
         biased_list = list()
         for service, bias in self.__behavior.bias.items():
@@ -94,7 +95,7 @@ class Agent:
         rand_service = random.sample(biased_list, 1)[0]
 
         # Choose random VM to perform action on
-        rand_service, rand_vm = choose_vm(rand_service, vms)
+        rand_service, rand_vm = choose_vm(rand_service, self.__network)
 
         combo = random.randrange(self.behavior.bias[rand_service.name()]['combo_max'])
         self.repeat(rand_service, rand_vm, combo)
@@ -105,10 +106,12 @@ class Agent:
         rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], vm)
 
         if not execute(rand_command, rand_parameter):
-            self.action(vms)
+            self.action()
+            return
 
         if combo > 0:
-            threading.Timer(self.behavior.bias[service.name()]['wait_time'], self.repeat, [service, vm, combo - 1]).start()
+            threading.Timer(random.randrange(self.behavior.bias[service.name()]['wait_time']), self.repeat,
+                            [service, vm, combo - 1]).start()
 
     def to_csv(self):
         ret = {
@@ -119,21 +122,22 @@ class Agent:
         return ret
 
     def add_service(self, service):
-        try:
-            self.__services.add(service)
-        except:
-            pass
+        self.__services.add(service)
 
     def del_service(self, service):
         try:
             self.__services.remove(service)
-        except:
+        except KeyError:
             pass
 
     def update_behavior(self, service, bias):
         self.__behavior.change_bias(service, bias)
 
     # Attributes
+    @property
+    def network(self):
+        return self.__network
+
     @property
     def services(self):
         return self.__services
