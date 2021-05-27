@@ -133,6 +133,13 @@ class Agent:
     def update_behavior(self, service, bias):
         self.__behavior.change_bias(service, bias)
 
+    def start(self, max_actions):
+        self.__started = True
+
+        for _ in range(max_actions):
+            threading.Timer(10, self.action)
+
+
     # Attributes
     @property
     def network(self):

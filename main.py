@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse
 import json
+import random
 from datetime import datetime, timedelta
 
 from src import agent
@@ -54,6 +55,7 @@ def configure(config_file):
                 {'behavior': 'admin', 'services': ['sshd'], 'ip': '192.168.10.13'}
             ],
             'ip': '192.168.10.10',
+            'max_actions': 5000,
             'behavior': 'user',
             'services': [
                 {
@@ -96,6 +98,9 @@ def main(file):
 
     agt = agent.Agent(conf['network']['ip'], conf['network']['behavior'], conf['network']['services'],
                       conf['network']['vms'])
+
+    max_actions = conf['network']['max_actions']
+    agt.start(random.randrange(max_actions / 2, max_actions))
 
 
 if __name__ == '__main__':
