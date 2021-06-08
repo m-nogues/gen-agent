@@ -7,19 +7,20 @@ def load_bias(role, services):
     with open('conf/' + role + '.json', 'r') as f:
         tmp = json.load(f)
 
-    for s in services:
-        if s.name in tmp.keys():
-            bias[s.name] = tmp[s.name]
+    for t in tmp.keys():
+        for s in services:
+            if s.name in tmp[t].keys():
+                bias[t][s.name] = tmp[t][s.name]
 
-    total = 0
-    for v in bias:
-        total += v['bias']
+        total = 0
+        for v in bias[t]:
+            total += v['bias']
 
-    if total == 0.0:
-        total = 1.0
+        if total == 0.0:
+            total = 1.0
 
-    for b in bias:
-        bias[b]['bias'] /= total
+        for b in bias[t]:
+            bias[t][b]['bias'] /= total
     return bias
 
 

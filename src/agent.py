@@ -3,8 +3,9 @@ import random
 import subprocess
 import threading
 from copy import deepcopy
+from datetime import datetime, time
 
-from src.model import behavior
+from src.model import action, behavior
 
 AGENT_IP = ''
 
@@ -71,7 +72,7 @@ class Agent:
         set_ip(ip)
         self.__started = False
 
-        self.__network = network
+        self.__network, self.__actions = network, list()
         self.__behavior, self.__services = behavior.Behavior(ip + ' - ' + bhvr, services, bhvr), services
 
     def __str__(self):
@@ -81,12 +82,27 @@ class Agent:
             ret += '\n\tservice_' + str(i) + ':' + ''.join(['\n\t\t' + line for line in str(service).split('\n')])
             i += 1
 
-        ret += '\nbehavior:' + ''.join(['\n\t' + line for line in str(self.__behavior).split('\n')])
+        ret += '\nbehavior:' + ''.join(['\n\t' + line for line in str(self.__behavior).split('\n')]) + '\nactions:'
+        i = 0
+        for action in self.__actions:
+            ret += '\n\taction_' + str(i) + ':' + ''.join(['\n\t\t' + line for line in str(action).split('\n')])
+            i += 1
 
         return ret
 
     # Useful Methods
     def action(self):
+        # Find what bias to use at that time
+        now = datetime.now().time()
+        behavior = self.__behavior.bias
+
+        for t in self.__behavior.bias.keys():
+            start, end = t.split('-')
+            start, end = time.fromisoformat(start), time.fromisoformat(end)
+
+            if start < now < end:
+                behavior = self.__behavior.bias[t]
+
         # Choose biased service
         biased_list = list()
         for service, bias in self.__behavior.bias.items():
@@ -105,6 +121,7 @@ class Agent:
         rand_command = random.sample(service.commands, 1)[0]
         rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], vm)
 
+        self.__actions += [action.Actions(rand_command.name, datetime.now(), rand_parameter)]
         if not execute(rand_command, rand_parameter):
             self.action()
             return
@@ -139,7 +156,6 @@ class Agent:
         for _ in range(max_actions):
             threading.Timer(10, self.action)
 
-
     # Attributes
     @property
     def network(self):
@@ -148,6 +164,10 @@ class Agent:
     @property
     def services(self):
         return self.__services
+
+    @property
+    def actions(self):
+        return self.__actions
 
     @property
     def behavior(self):
