@@ -13,6 +13,9 @@ class Command:
     def name(self): return self.__name
 
     @property
+    def errors(self): return self.__errors
+
+    @property
     def parameters(self): return self.__parameters
 
     def add_parameter(self, parameter):

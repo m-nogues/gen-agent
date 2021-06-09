@@ -8,12 +8,13 @@ def load_bias(role, services):
         tmp = json.load(f)
 
     for t in tmp.keys():
+        bias[t] = dict()
         for s in services:
             if s.name in tmp[t].keys():
                 bias[t][s.name] = tmp[t][s.name]
 
         total = 0
-        for v in bias[t]:
+        for v in bias[t].values():
             total += v['bias']
 
         if total == 0.0:

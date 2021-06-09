@@ -6,48 +6,33 @@
                 {"behavior": "admin", "services": ["sshd"], "ip": "192.168.10.13"}
             ],
             "ip": "192.168.10.10",
-            "max_actions": 5000,
+            "max_actions": 50000,
             "behavior": "user",
             "services": [
                 {
                     "name": "sshd",
                     "commands": [
-                        {"name": "22", "parameters": ["tester@&ip"]},
-                        {"name": "sftp", "parameters": ["tester@&ip"]}
+                        {"name": "22", "parameters": ["tester@&ip"], "errors": []},
+                        {"name": "sftp", "parameters": ["tester@&ip"], "errors": []}
                     ]
                 },
                 {
                     "name": "ftpd",
                     "commands": [
-                        {"name": "ftp", "parameters": ["&ip"]}
+                        {"name": "ftp", "parameters": ["&ip"], "errors": []}
                     ]
                 },
                 {
                     "name": "httpd",
                     "commands": [
-                        {"name": "wget", "parameters": [
-                            "http://&ip", "-r http://&ip"]},
-                        {"name": "curl", "parameters": ["http://&ip"]}
+                        {"name": "wget", "parameters": ["http://&ip", "-r http://&ip"], "errors": []},
+                        {"name": "curl", "parameters": ["http://&ip"], "errors": []}
                     ]
                 }
             ]
         },
 	"experiment": {
-		"start_date": "2021-02-24 13:49",
-		"end_date": "2021-03-03 13:49"
-	},
-	"attacker": {
-		"max_actions": 500,
-		"attacks": [
-			{
-				"name": "nmap",
-				"parameters": [
-					"&ip",
-					"-sC 192.168.10.0/24",
-					"-A 192.168.10.0/24",
-					"-sV -F 192.168.10.0/24"
-				]
-			}
-		]
+		"start_date": "2021-06-14 12:00",
+		"end_date": "2021-06-18 12:00"
 	}
 }

@@ -155,15 +155,17 @@ class Agent:
     def start(self, max_actions, start, end):
         self.__started = True
         duration = end - start
-        avg_between_action = max_actions / duration.total_seconds()
+        avg_between_action = duration.total_seconds() / max_actions
 
         for i in range(max_actions):
             now = datetime.now()
             t_action = (start + timedelta(seconds=avg_between_action * i) - now).total_seconds()
 
             if now + timedelta(seconds=t_action) < end:
+                # print("created timer at date : " + (now + timedelta(seconds=t_action)).strftime("%m/%d/%Y, %H:%M:%S"))
                 threading.Timer(t_action, self.action).start()
             else:
+                # print("created timer at date : " + (now + timedelta(seconds=t_action)).strftime("%m/%d/%Y, %H:%M:%S"))
                 threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action).start()
 
     # Attributes

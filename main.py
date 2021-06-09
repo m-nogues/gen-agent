@@ -13,7 +13,7 @@ def convert_to_objects(conf):
     for s in conf['network']['services']:
         tmp = service.Service(s['name'])
         for c in s['commands']:
-            co = command.Command(c['name'])
+            co = command.Command(c['name'], c['errors'])
             for p in c['parameters']:
                 co.add_parameter(p)
             tmp.add_command(co)
@@ -27,7 +27,9 @@ def convert_to_objects(conf):
         for s in v['services']:
             for srv in services:
                 if s in srv.name:
-                    v.add_service(srv)
+                    tmp.add_service(srv)
+        vms.add(tmp)
+    conf['network']['vms'] = vms
 
     conf['experiment']['start_date'] = datetime.strptime(conf['experiment']['start_date'], '%Y-%m-%d %H:%M')
     conf['experiment']['end_date'] = datetime.strptime(conf['experiment']['end_date'], '%Y-%m-%d %H:%M')
