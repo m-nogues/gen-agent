@@ -162,9 +162,9 @@ class Agent:
             t_action = (start + timedelta(seconds=avg_between_action * i) - now).total_seconds()
 
             if now + timedelta(seconds=t_action) < end:
-                threading.Timer(t_action, self.action)
+                threading.Timer(t_action, self.action).start()
             else:
-                threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action)
+                threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action).start()
 
     # Attributes
     @property

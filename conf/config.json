@@ -1,81 +1,37 @@
 {
 	"network": {
-		"vms": [
-			{
-				"behavior": "user",
-				"services": [
-					"ftpd"
-				],
-				"max_actions": 5000
-			},
-			{
-				"behavior": "server",
-				"services": [
-					"sshd",
-					"ftpd",
-					"httpd"
-				],
-				"max_actions": 0
-			},
-			{
-				"behavior": "admin",
-				"services": [
-					"sshd"
-				],
-				"max_actions": 2500
-			}
-		],
-		"number_of_changes": 1,
-		"prefix": "192.168.10.",
-		"services": [
-			{
-				"name": "sshd",
-				"commands": [
-					{
-						"name": "ssh",
-						"parameters": [
-							"tester@&ip"
-						]
-					},
-					{
-						"name": "sftp",
-						"parameters": [
-							"tester@&ip"
-						]
-					}
-				]
-			},
-			{
-				"name": "ftpd",
-				"commands": [
-					{
-						"name": "ftp",
-						"parameters": [
-							"&ip"
-						]
-					}
-				]
-			},
-			{
-				"name": "httpd",
-				"commands": [
-					{
-						"name": "wget",
-						"parameters": [
-							"http://&ip",
-							"-r http://&ip"
-						]
-					},
-					{
-						"name": "curl",
-						"parameters": [
-							"http://&ip"
-						]
-					}
-				]
-			}
-		]
-	},
+            "vms": [
+                {"behavior": "user", "services": ["ftpd"], "ip": "192.168.10.11"},
+                {"behavior": "server", "services": ["sshd", "ftpd", "httpd"], "ip": "192.168.10.12"},
+                {"behavior": "admin", "services": ["sshd"], "ip": "192.168.10.13"}
+            ],
+            "ip": "192.168.10.10",
+            "max_actions": 5000,
+            "behavior": "user",
+            "services": [
+                {
+                    "name": "sshd",
+                    "commands": [
+                        {"name": "22", "parameters": ["tester@&ip"]},
+                        {"name": "sftp", "parameters": ["tester@&ip"]}
+                    ]
+                },
+                {
+                    "name": "ftpd",
+                    "commands": [
+                        {"name": "ftp", "parameters": ["&ip"]}
+                    ]
+                },
+                {
+                    "name": "httpd",
+                    "commands": [
+                        {"name": "wget", "parameters": [
+                            "http://&ip", "-r http://&ip"]},
+                        {"name": "curl", "parameters": ["http://&ip"]}
+                    ]
+                }
+            ]
+        },
 	"experiment": {
 		"start_date": "2021-02-24 13:49",
 		"end_date": "2021-03-03 13:49"
