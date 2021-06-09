@@ -3,7 +3,7 @@ import random
 import subprocess
 import threading
 from copy import deepcopy
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 from src.model import action, behavior
 
@@ -106,7 +106,7 @@ class Agent:
         # Choose biased service
         biased_list = list()
         for service, bias in self.__behavior.bias.items():
-            biased_list += [service for _ in range(int(bias * 100))]
+            biased_list += [service for _ in range(int(bias['bias'] * 100))]
 
         rand_service = random.sample(biased_list, 1)[0]
 
@@ -121,12 +121,12 @@ class Agent:
         rand_command = random.sample(service.commands, 1)[0]
         rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], vm)
 
-        self.__actions += [action.Actions(rand_command.name, datetime.now(), rand_parameter)]
-        if not execute(rand_command, rand_parameter):
-            self.action()
-            return
-
         if combo > 0:
+            self.__actions += [action.Action(rand_command.name, datetime.now(), rand_parameter)]
+            if not execute(rand_command, rand_parameter):
+                self.action()
+                return
+
             threading.Timer(random.randrange(self.behavior.bias[service.name()]['wait_time']), self.repeat,
                             [service, vm, combo - 1]).start()
 
@@ -134,7 +134,9 @@ class Agent:
         ret = {
             'ip': AGENT_IP,
             'services': ' '.join([service.name for service in self.__services]),
-            'behavior': self.__behavior.name
+            'behavior': self.__behavior.name,
+            'actions': ';'.join(
+                [action.name + ',' + str(action.timestamp) + ',' + action.parameters for action in self.__actions])
         }
         return ret
 
@@ -150,11 +152,19 @@ class Agent:
     def update_behavior(self, service, bias):
         self.__behavior.change_bias(service, bias)
 
-    def start(self, max_actions):
+    def start(self, max_actions, start, end):
         self.__started = True
+        duration = end - start
+        avg_between_action = max_actions / duration.total_seconds()
 
-        for _ in range(max_actions):
-            threading.Timer(10, self.action)
+        for i in range(max_actions):
+            now = datetime.now()
+            t_action = (start + timedelta(seconds=avg_between_action * i) - now).total_seconds()
+
+            if now + timedelta(seconds=t_action) < end:
+                threading.Timer(t_action, self.action)
+            else:
+                threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action)
 
     # Attributes
     @property

@@ -100,7 +100,8 @@ def main(file):
                       conf['network']['vms'])
 
     max_actions = conf['network']['max_actions']
-    agt.start(random.randrange(max_actions / 2, max_actions))
+    agt.start(random.randrange(int(max_actions / 2), max_actions), conf['experiment']['start_date'],
+              conf['experiment']['end_date'])
 
 
 if __name__ == '__main__':

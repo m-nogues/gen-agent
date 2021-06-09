@@ -17,8 +17,3 @@ class Action:
 
     @property
     def parameters(self): return self.__parameters
-
-    # Useful methods
-    def execute(self):
-        # TODO
-        return

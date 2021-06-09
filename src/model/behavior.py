@@ -36,10 +36,7 @@ class Behavior:
             print("Behavior for `{}` is not configured".format(role))
 
     def __str__(self):
-        ret = 'name:\t' + self.__name + '\nbias:'
-
-        for key, value in self.__bias.items():
-            ret += '\n\t' + key + ':\t' + str(value)
+        ret = 'name:\t' + self.__name + '\nbias:' + json.dumps(self.__bias, indent='t')
 
         return ret
 
