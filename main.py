@@ -63,22 +63,21 @@ def configure(config_file):
                 {
                     'name': 'sshd',
                     'commands': [
-                        {'name': '22', 'parameters': ['tester@&ip']},
-                        {'name': 'sftp', 'parameters': ['tester@&ip']}
+                        {'name': '22', 'parameters': ['tester@&ip'], 'errors': []},
+                        {'name': 'sftp', 'parameters': ['tester@&ip'], 'errors': []}
                     ]
                 },
                 {
                     'name': 'ftpd',
                     'commands': [
-                        {'name': 'ftp', 'parameters': ['&ip']}
+                        {'name': 'ftp', 'parameters': ['&ip'], 'errors': []}
                     ]
                 },
                 {
                     'name': 'httpd',
                     'commands': [
-                        {'name': 'wget', 'parameters': [
-                            'http://&ip', '-r http://&ip']},
-                        {'name': 'curl', 'parameters': ['http://&ip']}
+                        {'name': 'wget', 'parameters': ['http://&ip', '-r http://&ip'], 'errors': []},
+                        {'name': 'curl', 'parameters': ['http://&ip'], 'errors': []}
                     ]
                 }
             ]
