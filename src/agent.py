@@ -105,7 +105,7 @@ class Agent:
 
         # Choose biased service
         biased_list = list()
-        for service, bias in self.__behavior.bias.items():
+        for service, bias in behavior.items():
             biased_list += [service for _ in range(int(bias['bias'] * 100))]
 
         rand_service = random.sample(biased_list, 1)[0]

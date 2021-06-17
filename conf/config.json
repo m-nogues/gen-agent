@@ -6,7 +6,7 @@
                 {"behavior": "admin", "services": ["sshd"], "ip": "192.168.10.13"}
             ],
             "ip": "192.168.10.10",
-            "max_actions": 50000,
+            "max_actions": 5000,
             "behavior": "user",
             "services": [
                 {
@@ -32,7 +32,7 @@
             ]
         },
 	"experiment": {
-		"start_date": "2021-06-14 12:00",
-		"end_date": "2021-06-18 12:00"
+		"start_date": "2021-06-18 12:00",
+		"end_date": "2021-06-19 12:00"
 	}
 }
