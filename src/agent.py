@@ -1,9 +1,11 @@
+import json
 import random
-# import socket
 import subprocess
 import threading
 from copy import deepcopy
 from datetime import datetime, time, timedelta
+
+import pandas as pd
 
 from src.model import action, behavior
 
@@ -20,7 +22,7 @@ def format_parameter(parameter, vm):
     Returns:
         string -- The formatted parameter
     """
-    ret = parameter.replace('&ip', vm.ip).replace('&mac', vm.mac)
+    ret = parameter.replace('&ip', vm.ip)
     return ret
 
 
@@ -30,14 +32,10 @@ def choose_vm(rand_service, vms):
     while True:
         for s in rand_vm.services:
             if rand_service in s.name:
-                rand_service = s
-                break
+                return s, rand_vm
         else:
-            tmp.pop(rand_vm)
+            tmp.remove(rand_vm)
             rand_vm = random.choice(tmp)
-            continue
-        break
-    return rand_service, rand_vm
 
 
 # def rec_cmd():
@@ -56,7 +54,7 @@ def set_ip(ip):
 
 
 def execute(command, parameter):
-    result = subprocess.run([command, parameter], stdout=subprocess.PIPE)
+    result = subprocess.run([command.name, parameter], stdout=subprocess.PIPE)
 
     for err in command.errors:
         if err in result.stdout:
@@ -108,15 +106,15 @@ class Agent:
         for service, bias in behavior.items():
             biased_list += [service for _ in range(int(bias['bias'] * 100))]
 
-        rand_service = random.sample(biased_list, 1)[0]
+        rand_service_name = random.sample(biased_list, 1)[0]
 
         # Choose random VM to perform action on
-        rand_service, rand_vm = choose_vm(rand_service, self.__network)
+        rand_service, rand_vm = choose_vm(rand_service_name, self.__network)
 
-        combo = random.randrange(self.behavior.bias[rand_service.name()]['combo_max'])
-        self.repeat(rand_service, rand_vm, combo)
+        combo = random.randrange(behavior[rand_service.name]['combo_max'])
+        self.repeat(behavior, rand_service, rand_vm, combo)
 
-    def repeat(self, service, vm, combo):
+    def repeat(self, behavior, service, vm, combo):
         # Choose random command and parameters
         rand_command = random.sample(service.commands, 1)[0]
         rand_parameter = format_parameter(random.sample(rand_command.parameters, 1)[0], vm)
@@ -127,16 +125,18 @@ class Agent:
                 self.action()
                 return
 
-            threading.Timer(random.randrange(self.behavior.bias[service.name()]['wait_time']), self.repeat,
-                            [service, vm, combo - 1]).start()
+            combotimer = threading.Timer(random.randrange(behavior[service.name]['wait_time']), self.repeat,
+                                         [behavior, service, vm, combo - 1])
+            combotimer.start()
+            combotimer.join()
 
-    def to_csv(self):
+    def to_json(self):
         ret = {
             'ip': AGENT_IP,
             'services': ' '.join([service.name for service in self.__services]),
             'behavior': self.__behavior.name,
             'actions': ';'.join(
-                [action.name + ',' + str(action.timestamp) + ',' + action.parameters for action in self.__actions])
+                [str(action.timestamp) + ',' + action.name + ',' + action.parameters for action in self.__actions])
         }
         return ret
 
@@ -152,10 +152,17 @@ class Agent:
     def update_behavior(self, service, bias):
         self.__behavior.change_bias(service, bias)
 
+    @property
+    def services(self):
+        return self.__services
+
     def start(self, max_actions, start, end):
+        if datetime.now() > end:
+            raise ValueError("Wrong time of experiment set in configuration file")
         self.__started = True
         duration = end - start
         avg_between_action = duration.total_seconds() / max_actions
+        action_threads = list()
 
         for i in range(max_actions):
             now = datetime.now()
@@ -163,19 +170,27 @@ class Agent:
 
             if now + timedelta(seconds=t_action) < end:
                 # print("created timer at date : " + (now + timedelta(seconds=t_action)).strftime("%m/%d/%Y, %H:%M:%S"))
-                threading.Timer(t_action, self.action).start()
+                action_threads += [threading.Timer(t_action, self.action)]
             else:
                 # print("created timer at date : " + (now + timedelta(seconds=t_action)).strftime("%m/%d/%Y, %H:%M:%S"))
-                threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action).start()
+                action_threads += [threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action)]
+
+        now = datetime.now()
+        stop_thread = threading.Timer((end - now).total_seconds(), self.stop)
+
+        for t in action_threads:
+            t.start()
+
+        for t in action_threads:
+            t.join()
+
+        stop_thread.start()
+        stop_thread.join()
 
     # Attributes
     @property
     def network(self):
         return self.__network
-
-    @property
-    def services(self):
-        return self.__services
 
     @property
     def actions(self):
@@ -188,3 +203,18 @@ class Agent:
     @property
     def started(self):
         return self.__started
+
+    def stop(self):
+        report = self.to_json()
+        with open('agent-report.json', 'w') as f:
+            json.dump(report, f, indent='\t')
+
+        list_actions = {'timestamp': [], 'command': [], 'parameters': []}
+        for action in self.actions:
+            list_actions['timestamp'] += [action.timestamp]
+            list_actions['command'] += [action.name]
+            list_actions['parameters'] += [action.parameters]
+
+        df = pd.DataFrame(data=list_actions)
+        with open('actions.csv', 'w') as f:
+            df.to_csv(path_or_buf=f, sep=',', index=False, columns=list(list_actions.keys()))

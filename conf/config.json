@@ -1,18 +1,18 @@
 {
 	"network": {
             "vms": [
-                {"behavior": "user", "services": ["ftpd"], "ip": "192.168.10.11"},
-                {"behavior": "server", "services": ["sshd", "ftpd", "httpd"], "ip": "192.168.10.12"},
-                {"behavior": "admin", "services": ["sshd"], "ip": "192.168.10.13"}
+                {"services": ["ftpd"], "ip": "192.168.10.11"},
+                {"services": ["sshd", "ftpd", "httpd"], "ip": "192.168.10.12"},
+                {"services": ["sshd"], "ip": "192.168.10.13"}
             ],
             "ip": "192.168.10.10",
-            "max_actions": 5000,
+            "max_actions": 2,
             "behavior": "user",
             "services": [
                 {
                     "name": "sshd",
                     "commands": [
-                        {"name": "22", "parameters": ["tester@&ip"], "errors": []},
+                        {"name": "ssh", "parameters": ["tester@&ip"], "errors": []},
                         {"name": "sftp", "parameters": ["tester@&ip"], "errors": []}
                     ]
                 },
@@ -32,7 +32,7 @@
             ]
         },
 	"experiment": {
-		"start_date": "2021-06-18 12:00",
-		"end_date": "2021-06-19 12:00"
+		"start_date": "2021-06-21 16:06",
+		"end_date": "2021-06-21 16:07"
 	}
 }

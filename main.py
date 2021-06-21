@@ -21,14 +21,14 @@ def convert_to_objects(conf):
         services.add(tmp)
     conf['network']['services'] = services
 
-    vms = set()
+    vms = list()
     for v in conf['network']['vms']:
-        tmp = vm.Vm(v['ip'], v['behavior'])
+        tmp = vm.Vm(v['ip'])
         for s in v['services']:
             for srv in services:
                 if s in srv.name:
                     tmp.add_service(srv)
-        vms.add(tmp)
+        vms += [tmp]
     conf['network']['vms'] = vms
 
     conf['experiment']['start_date'] = datetime.strptime(conf['experiment']['start_date'], '%Y-%m-%d %H:%M')
@@ -52,9 +52,9 @@ def configure(config_file):
     except OSError:
         conf['network'] = {
             'vms': [
-                {'behavior': 'user', 'services': ['ftpd'], 'ip': '192.168.10.11'},
-                {'behavior': 'server', 'services': ['sshd', 'ftpd', 'httpd'], 'ip': '192.168.10.12'},
-                {'behavior': 'admin', 'services': ['sshd'], 'ip': '192.168.10.13'}
+                {'services': ['ftpd'], 'ip': '192.168.10.11'},
+                {'services': ['sshd', 'ftpd', 'httpd'], 'ip': '192.168.10.12'},
+                {'services': ['sshd'], 'ip': '192.168.10.13'}
             ],
             'ip': '192.168.10.10',
             'max_actions': 5000,
@@ -63,7 +63,7 @@ def configure(config_file):
                 {
                     'name': 'sshd',
                     'commands': [
-                        {'name': '22', 'parameters': ['tester@&ip'], 'errors': []},
+                        {'name': 'ssh', 'parameters': ['tester@&ip'], 'errors': []},
                         {'name': 'sftp', 'parameters': ['tester@&ip'], 'errors': []}
                     ]
                 },

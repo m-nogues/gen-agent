@@ -5,7 +5,7 @@ class Action:
         self.__name, self.__timestamp, self.__parameters = name, timestamp, parameters
 
     def __str__(self):
-        return 'type:\t' + self.__name + '\ntimestamp:\t' + str(self.__timestamp) + '\nparameters:\t' +\
+        return 'type:\t' + self.__name + '\ntimestamp:\t' + str(self.__timestamp) + '\nparameters:\t' + \
                self.__parameters + '\n'
 
     # Attributes

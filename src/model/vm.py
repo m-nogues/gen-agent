@@ -1,8 +1,8 @@
 class Vm:
 
     # Python native methods
-    def __init__(self, ip, behavior):
-        self.__ip, self.__behavior, self.__services = ip, behavior, set()
+    def __init__(self, ip):
+        self.__ip, self.__services = ip, set()
 
     def __str__(self):
         ret = 'ip:\t' + self.__ip + '\nservices:'
@@ -10,8 +10,6 @@ class Vm:
         for service in self.__services:
             ret += '\n\tservice_' + str(i) + ':' + ''.join(['\n\t\t' + line for line in str(service).split('\n')])
             i += 1
-
-        ret += '\nbehavior:' + ''.join(['\n\t' + line for line in str(self.__behavior).split('\n')])
 
         return ret
 
@@ -21,9 +19,6 @@ class Vm:
 
     @property
     def services(self): return self.__services
-
-    @property
-    def behavior(self): return self.__behavior
 
     # Useful methods
     def add_service(self, service):
@@ -38,13 +33,9 @@ class Vm:
         except:
             pass
 
-    def update_behavior(self, service, bias):
-        self.__behavior.change_bias((service, bias))
-
     def to_csv(self):
         ret = {
             'ip': self.__ip,
-            'services': ' '.join([service.name for service in self.__services]),
-            'behavior': self.__behavior.name
+            'services': ' '.join([service.name for service in self.__services])
         }
         return ret
