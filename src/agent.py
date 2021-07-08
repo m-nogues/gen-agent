@@ -102,7 +102,7 @@ class Agent:
                 behavior = self.__behavior.bias[t]
 
         # No action if we are not in a defined time interval
-        if 'bias' not in behavior[behavior.keys()[0]]:
+        if 'bias' not in behavior[list(behavior.keys())[0]]:
             return
 
         # Choose biased service
