@@ -1,0 +1,87 @@
+{
+  "00:00-10:00": {
+    "httpd": {
+      "bias": 0.59,
+      "combo_max": 10,
+      "wait_time": 30
+    },
+    "ftpd": {
+      "bias": 0.0,
+      "combo_max": 0,
+      "wait_time": 0
+    },
+    "sshd": {
+      "bias": 0.05,
+      "combo_max": 5,
+      "wait_time": 5
+    }
+  },
+  "11:30-13:30": {
+    "httpd": {
+      "bias": 0.75,
+      "combo_max": 10,
+      "wait_time": 30
+    },
+    "ftpd": {
+      "bias": 0.2,
+      "combo_max": 2,
+      "wait_time": 60
+    },
+    "sshd": {
+      "bias": 0.05,
+      "combo_max": 5,
+      "wait_time": 5
+    }
+  },
+  "13:30-18:00": {
+    "httpd": {
+      "bias": 0.75,
+      "combo_max": 10,
+      "wait_time": 30
+    },
+    "ftpd": {
+      "bias": 0.2,
+      "combo_max": 2,
+      "wait_time": 60
+    },
+    "sshd": {
+      "bias": 0.05,
+      "combo_max": 5,
+      "wait_time": 5
+    }
+  },
+  "18:00-00:00": {
+    "httpd": {
+      "bias": 0.75,
+      "combo_max": 10,
+      "wait_time": 30
+    },
+    "ftpd": {
+      "bias": 0.2,
+      "combo_max": 2,
+      "wait_time": 60
+    },
+    "sshd": {
+      "bias": 0.05,
+      "combo_max": 5,
+      "wait_time": 5
+    }
+  },
+  "00:00-08:00": {
+    "httpd": {
+      "bias": 0.75,
+      "combo_max": 10,
+      "wait_time": 30
+    },
+    "ftpd": {
+      "bias": 0.2,
+      "combo_max": 2,
+      "wait_time": 60
+    },
+    "sshd": {
+      "bias": 0.05,
+      "combo_max": 5,
+      "wait_time": 5
+    }
+  }
+}
