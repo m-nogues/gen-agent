@@ -51,33 +51,41 @@ def configure(config_file):
 
     except OSError:
         conf['network'] = {
-            'vms': [
-                {'services': ['ftpd'], 'ip': '192.168.10.11'},
-                {'services': ['sshd', 'ftpd', 'httpd'], 'ip': '192.168.10.12'},
-                {'services': ['sshd'], 'ip': '192.168.10.13'}
+            "vms": [
+                {"services": ["web", "mail", "social", "games", "technical"], "ip": "?"}
             ],
-            'ip': '192.168.10.10',
-            'max_actions': 5000,
-            'behavior': 'user',
-            'services': [
+            "ip": "?",
+            "max_actions": 5000,
+            "behavior": "passenger",
+            "services": [
                 {
-                    'name': 'sshd',
-                    'commands': [
-                        {'name': 'ssh', 'parameters': ['tester@&ip'], 'errors': []},
-                        {'name': 'sftp', 'parameters': ['tester@&ip'], 'errors': []}
+                    "name": "web",
+                    "commands": [
+                        {"name": "curl", "parameters": ["https://www.google.fr", "https://slashdot.org", "https://news.google.com"], "errors": []}
                     ]
                 },
                 {
-                    'name': 'ftpd',
-                    'commands': [
-                        {'name': 'ftp', 'parameters': ['&ip'], 'errors': []}
+                    "name": "mail",
+                    "commands": [
+                        {"name": "powershell", "parameters": ["& \"\"conf\\mail.ps1\"\""], "errors": []}
                     ]
                 },
                 {
-                    'name': 'httpd',
-                    'commands': [
-                        {'name': 'wget', 'parameters': ['http://&ip', '-r http://&ip'], 'errors': []},
-                        {'name': 'curl', 'parameters': ['http://&ip'], 'errors': []}
+                    "name": "social",
+                    "commands": [
+                        {"name": "curl", "parameters": ["https://www.facebook.com", "https://twitter.com", "https://www.youtube.com"], "errors": []}
+                    ]
+                },
+                {
+                    "name": "games",
+                    "commands": [
+                        {"name": "curl", "parameters": ["https://www.newgrounds.com", "https://www.absolu-flash.fr"], "errors": []}
+                    ]
+                },
+                {
+                    "name": "technical",
+                    "commands": [
+                        {"name": "curl", "parameters": ["https://stackoverflow.com", "https://wiki.archlinux.org", "https://docs.microsoft.com"], "errors": []}
                     ]
                 }
             ]
