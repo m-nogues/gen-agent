@@ -63,6 +63,11 @@ def execute(command, parameter):
     return True
 
 
+def note_action(timestamp, command, parameter):
+    with open("actions.csv", "a") as f:
+        f.write(timestamp + "," + command + "," + parameter + "\n")
+
+
 class Agent:
 
     # Python native methods
@@ -125,6 +130,7 @@ class Agent:
 
         if combo > 0:
             self.__actions += [action.Action(rand_command.name, datetime.now(), rand_parameter)]
+            note_action(datetime.now(), rand_command.name, rand_parameter)
             if not execute(rand_command, rand_parameter):
                 self.action()
                 return
@@ -179,16 +185,19 @@ class Agent:
                 # print("created timer at date : " + (now + timedelta(seconds=t_action)).strftime("%m/%d/%Y, %H:%M:%S"))
                 action_threads += [threading.Timer((end - (now + timedelta(seconds=i))).total_seconds(), self.action)]
 
+        with open("actions.csv", "w") as f:
+            f.write("timestamp,command,parameters\n")
+
         now = datetime.now()
         stop_thread = threading.Timer((end - now).total_seconds(), self.stop)
 
         for t in action_threads:
             t.start()
+        stop_thread.start()
 
         for t in action_threads:
             t.join()
 
-        stop_thread.start()
         stop_thread.join()
 
     # Attributes
