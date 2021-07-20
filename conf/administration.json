@@ -1,5 +1,5 @@
 {
-  "10:00-12:00": {
+  "07:00-08:00": {
     "web": {
       "bias": 0.59,
       "combo_max": 10,
@@ -22,11 +22,11 @@
     },
     "technical": {
       "bias": 0.01,
-      "combo_max": 1,
+      "combo_max": 10,
       "wait_time": 10
     }
   },
-  "14:00-18:00": {
+  "19:00-20:00": {
     "web": {
       "bias": 0.59,
       "combo_max": 10,
@@ -49,11 +49,11 @@
     },
     "technical": {
       "bias": 0.01,
-      "combo_max": 1,
+      "combo_max": 10,
       "wait_time": 10
     }
   },
-  "20:00-22:00": {
+  "22:00-00:00": {
     "web": {
       "bias": 0.59,
       "combo_max": 10,
@@ -76,7 +76,7 @@
     },
     "technical": {
       "bias": 0.01,
-      "combo_max": 1,
+      "combo_max": 10,
       "wait_time": 10
     }
   }
